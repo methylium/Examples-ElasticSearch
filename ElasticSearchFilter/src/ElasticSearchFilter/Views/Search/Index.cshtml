@@ -1,0 +1,51 @@
+﻿@model ElasticSearchFilter.Models.DTO.PublicationsResultDTO
+@{
+    ViewData["Title"] = "Search";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <form class="form-inline" asp-controller="Search" asp-action="Index" method="get">
+            <div class="form-group">
+                <label for="query">Query</label>
+                <input class="form-control" id="query" type="text" name="query" placeholder="@Context.Request.Query["query"]" />
+            </div>
+            <button class="btn btn-default" type="submit">Search</button>
+        </form>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-md-4">
+        <h2>@Model.Aggregation.Name</h2>
+
+        <form asp-controller="Search" asp-action="Index" method="get">
+            <input type="hidden" name="query" value="@Context.Request.Query["query"]" />
+
+            @foreach (var bucket in Model.Aggregation.Buckets)
+            {
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" name="filters" value="@bucket.Key" @(Context.Request.Query["filters"].Contains(bucket.Key) ? "checked" : "") /> @bucket.Key <span class="badge">@bucket.Count</span>
+                    </label>
+                </div>
+            }
+
+            <button class="btn btn-default" type="submit">Filter</button>
+        </form>
+    </div>
+
+    <div class="col-md-8">
+        @foreach (var result in Model.Results)
+        {
+            <div class="row">
+                <div class="col-md-12">
+                    <h2>@result.Title</h2>
+                    <p>@result.Content</p>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
